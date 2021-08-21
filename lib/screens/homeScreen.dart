@@ -28,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final now = new DateTime.now();
     String formatter = DateFormat.yMMMMd('en_US').format(now);
     List<String> tokensList = [];
+    List<String> UIDsList = [];
 
     return SideMenu(
       radius: BorderRadius.all(
@@ -188,11 +189,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                               //user ids of nearby users
                                               tokensList.add(dtoken);
-
+                                              UIDsList.add(location['uid']);
                                               h++;
                                               if ((h ==
                                                   snapshots.data.length)) {
                                                 geoFire.writeGeoPoint(
+                                                    nearbyUsersUIDs: UIDsList,
                                                     tokens: tokensList);
                                                 print('sdfgsdfg');
 

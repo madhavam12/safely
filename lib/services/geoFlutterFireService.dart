@@ -25,7 +25,7 @@ class GeoFire {
 
     var collectionReference = _firestore.collection('pinkBooths');
     double radius = 5;
-    String field = 'position';
+    String field = 'loc';
     stream = geo
         .collection(collectionRef: collectionReference)
         .within(center: center, radius: radius, field: field);
@@ -33,7 +33,10 @@ class GeoFire {
     return stream;
   }
 
-  writeGeoPoint({List<String> tokens}) async {
+  writeGeoPoint({
+    @required List<String> tokens,
+    @required List<String> nearbyUsersUIDs,
+  }) async {
     try {
       Position pos = await _determinePosition();
       Firestore db = Firestore();
@@ -45,6 +48,7 @@ class GeoFire {
 
       await db.writeLoc(
         req: RequestModel(
+            nearbyUsersUIDs: nearbyUsersUIDs,
             deviceTokensNearby: tokens,
             address: address,
             name: FirebaseAuth.instance.currentUser.displayName,
