@@ -35,6 +35,7 @@ class GeoFire {
 
   writeGeoPoint({
     @required List<String> tokens,
+    @required List<String> numbers,
     @required List<String> nearbyUsersUIDs,
   }) async {
     try {
@@ -48,6 +49,7 @@ class GeoFire {
 
       await db.writeLoc(
         req: RequestModel(
+            nearbyUsersNumbers: numbers,
             nearbyUsersUIDs: nearbyUsersUIDs,
             deviceTokensNearby: tokens,
             address: address,

@@ -10,6 +10,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:safely/services/geoFlutterFireService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'package:fluttertoast/fluttertoast.dart';
+
+import 'package:url_launcher/url_launcher.dart';
+
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key}) : super(key: key);
 
@@ -28,7 +32,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final now = new DateTime.now();
     String formatter = DateFormat.yMMMMd('en_US').format(now);
     List<String> tokensList = [];
-    List<String> UIDsList = [];
+    List<String> uidsList = [];
+    List<String> numbers = [];
 
     return SideMenu(
       radius: BorderRadius.all(
@@ -189,12 +194,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                               //user ids of nearby users
                                               tokensList.add(dtoken);
-                                              UIDsList.add(location['uid']);
+                                              numbers.add(location['phone']);
+                                              uidsList.add(location['uid']);
                                               h++;
                                               if ((h ==
                                                   snapshots.data.length)) {
                                                 geoFire.writeGeoPoint(
-                                                    nearbyUsersUIDs: UIDsList,
+                                                    numbers: numbers,
+                                                    nearbyUsersUIDs: uidsList,
                                                     tokens: tokensList);
                                                 print('sdfgsdfg');
 
@@ -274,6 +281,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                   child: RequestCard(
                                     bgColor: colors[0],
+                                    phones: snapshot.data.docs[index]
+                                        .data()['nearbyUsersNumbers'],
                                     title: "On $formatted",
                                     description:
                                         "Requested help on $formatted when you were at ${snapshot.data.docs[index].data()['address']}",
@@ -301,10 +310,10 @@ List colors = [
 class RequestCard extends StatelessWidget {
   String title;
   String description;
-
+  List phones;
   Color bgColor;
 
-  RequestCard({this.title, this.description, this.bgColor});
+  RequestCard({this.title, this.phones, this.description, this.bgColor});
 
   @override
   Widget build(BuildContext context) {
@@ -323,11 +332,53 @@ class RequestCard extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          subtitle: Text(
-            description,
-            style: TextStyle(
-              color: kTitleTextColor.withOpacity(0.7),
-            ),
+          subtitle: Column(
+            children: [
+              Text(
+                description,
+                style: TextStyle(
+                  color: kTitleTextColor.withOpacity(0.7),
+                ),
+              ),
+              SizedBox(height: 20),
+              GestureDetector(
+                onTap: () async {
+                  phones.shuffle();
+
+                  String _url = 'tel:${phones[0]}';
+                  print(_url);
+                  await canLaunch(_url)
+                      ? await launch(_url)
+                      : Fluttertoast.showToast(
+                          msg: "Couldn't launch the dialer.",
+                          toastLength: Toast.LENGTH_LONG,
+                          gravity: ToastGravity.CENTER,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 7, horizontal: 10),
+                  decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.blue,
+                          blurRadius: 5.0,
+                        ),
+                      ],
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(15)),
+                  child: Text(
+                    "Call officer",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: "QuickSand",
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

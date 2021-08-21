@@ -6,6 +6,7 @@ class RequestModel {
 
   final List deviceTokensNearby;
   final List nearbyUsersUIDs;
+  final List nearbyUsersNumbers;
   final String userId;
 
   final String address;
@@ -15,6 +16,7 @@ class RequestModel {
   RequestModel({
     @required this.deviceTokensNearby,
     @required this.address,
+    @required this.nearbyUsersNumbers,
     @required this.nearbyUsersUIDs,
     @required this.name,
     @required this.userId,
@@ -24,6 +26,7 @@ class RequestModel {
   RequestModel.fromJson(Map<String, dynamic> json)
       : name = json['name'],
         userId = json['userId'],
+        nearbyUsersNumbers = json['nearbyUsersNumbers'],
         address = json['address'],
         nearbyUsersUIDs = json['nearbyUsersUID'],
         deviceTokensNearby = json["deviceTokensNearby"],
@@ -33,6 +36,7 @@ class RequestModel {
   Map<String, dynamic> toJson() => {
         'name': name,
         'loc': loc,
+        "nearbyUsersNumbers": nearbyUsersNumbers,
         'nearbyUsersUID': nearbyUsersUIDs,
         'address': address,
         "deviceTokensNearby": deviceTokensNearby,
