@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "797365434200-rg5tvmbr1g3afbkr7vl1k2qjdsnetdhq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.safely.safetyapp",
+            "certificate_hash": "8f3aa0b2b968193f7bf038b0d82b144b425e9792"
+          }
+        },
+        {
           "client_id": "797365434200-78ccosojuqpgft515c6ikl274ubv4u00.apps.googleusercontent.com",
           "client_type": 3
         }
