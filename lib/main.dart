@@ -6,8 +6,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:async/async.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:async';
+import 'screens/homeScreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:liquid_ui/liquid_ui.dart';
 
 void main() async {
+  //checks for connection in background nd shows a toat when not connected
   SimpleConnectionChecker _simpleConnectionChecker = SimpleConnectionChecker()
     ..setLookUpAddress('google.com');
 
@@ -24,5 +28,10 @@ void main() async {
   });
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MaterialApp(home: LoginScreen()));
+
+  if (FirebaseAuth.instance.currentUser != null) {
+    runApp(LiquidApp(materialApp: MaterialApp(home: HomeScreen())));
+  } else {
+    runApp(LiquidApp(materialApp: MaterialApp(home: LoginScreen())));
+  }
 }
