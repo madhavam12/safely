@@ -3,9 +3,9 @@ import 'package:safely/services/firebaseAuthService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:connection_verify/connection_verify.dart';
 import 'homeScreen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/services.dart';
+import 'widgets/widgets.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key key}) : super(key: key);
@@ -15,25 +15,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
-  void showInSnackBar({String value, Color color, int sec = 3}) {
-    FocusScope.of(context).requestFocus(new FocusNode());
-
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: new Text(
-        value,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-            color: Colors.white,
-            fontSize: 16.0,
-            fontFamily: "WorkSansSemiBold"),
-      ),
-      backgroundColor: color,
-      duration: Duration(seconds: sec),
-    ));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,6 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: () async {
                       if (!(await ConnectionVerify.connectionStatus())) {
                         showInSnackBar(
+                            context: context,
                             value:
                                 "No Internet connection. Please connect to the internet and then try again.",
                             color: Colors.red);
@@ -76,7 +58,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         var check = await authService.signInWithGoogle();
                         if (check is String) {
                           showInSnackBar(
-                              value: check, color: Colors.red, sec: 8);
+                              context: context,
+                              value: check,
+                              color: Colors.red,
+                              sec: 8);
                           return 0;
                         }
 
@@ -85,12 +70,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             MaterialPageRoute(
                                 builder: (context) => HomeScreen()));
                       } catch (e) {
-                        print(e);
                         if (e is PlatformException) {
                           String errorMessage =
                               getErrorMessage1(errorCode: e.code);
                           if (errorMessage != null) {
                             showInSnackBar(
+                                context: context,
                                 value: "${e.message}",
                                 color: Colors.red,
                                 sec: 8);
@@ -102,12 +87,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           String errorMessage =
                               getErrorMessage1(errorCode: e.code);
                           showInSnackBar(
+                              context: context,
                               value: "$errorMessage.",
                               color: Colors.red,
                               sec: 8);
                           return 0;
                         }
                         showInSnackBar(
+                            context: context,
                             value: "Unknown error occured.",
                             color: Colors.red,
                             sec: 8);

@@ -9,6 +9,8 @@ import '../tnCPage.dart';
 import '../creditsPage.dart';
 import '../privacyPolicyPage.dart';
 
+String email = 'madhavam.shahi.12@gmail.com';
+
 Widget buildMenu(context, _endSideMenuKey) {
   return SingleChildScrollView(
     padding: const EdgeInsets.symmetric(vertical: 50.0),
@@ -97,7 +99,7 @@ Widget buildMenu(context, _endSideMenuKey) {
           onTap: () {
             final Uri _emailLaunchUri = Uri(
                 scheme: 'mailto',
-                path: 'madhavam.shahi.12@gmail.com',
+                path: email,
                 queryParameters: {'subject': 'Suggestions / Bug Report'});
 
             launch(_emailLaunchUri.toString());
@@ -120,7 +122,7 @@ Widget buildMenu(context, _endSideMenuKey) {
           onTap: () {
             final Uri _emailLaunchUri = Uri(
                 scheme: 'mailto',
-                path: 'madhavam.shahi.12@gmail.com',
+                path: email,
                 queryParameters: {'subject': 'Suggestions / Bug Report'});
 
             launch(_emailLaunchUri.toString());

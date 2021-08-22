@@ -3,16 +3,12 @@ import 'package:shrink_sidemenu/shrink_sidemenu.dart';
 import 'widgets/sidebarItems.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+
 import 'constant.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'widgets/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:safely/services/geoFlutterFireService.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
-import 'package:fluttertoast/fluttertoast.dart';
-
-import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key}) : super(key: key);
@@ -22,7 +18,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 final GlobalKey<SideMenuState> _endSideMenuKey = GlobalKey<SideMenuState>();
-
+Stream reqStream = FirebaseFirestore.instance
+    .collection('requests')
+    .where('userId', isEqualTo: FirebaseAuth.instance.currentUser.uid)
+    .snapshots();
 GeoFire geoFire = GeoFire();
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -30,10 +29,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final now = new DateTime.now();
-    String formatter = DateFormat.yMMMMd('en_US').format(now);
-    List<String> tokensList = [];
-    List<String> uidsList = [];
-    List<String> numbers = [];
+    String formatter = DateFormat.yMMMMd('en_US')
+        .format(now); // used to get current date and time
+    List<String> tokensList =
+        []; //used to store deviceToken of nearby police officers(in booths)
+    List<String> uidsList =
+        []; //used to store uids of nearby police officers(in booths)
+    List<String> numbers =
+        []; //used to store numbers of nearby police officers(in booths)
 
     return SideMenu(
       radius: BorderRadius.all(
@@ -48,6 +51,10 @@ class _HomeScreenState extends State<HomeScreen> {
           body: CustomScrollView(
         slivers: [
           SliverAppBar(
+            shape: ContinuousRectangleBorder(
+                borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(50),
+                    bottomRight: Radius.circular(50))),
             leading: Container(),
             pinned: true,
             backgroundColor: Colors.blueAccent,
@@ -118,8 +125,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               GestureDetector(
                                 onTap: () async {
-                                  await geoFire.triggerBoothsStream();
-                                  print('ffd');
+                                  loadingBar(context);
+                                  await geoFire
+                                      .triggerBoothsStream(); //starts the geoflutterfirestream
+                                  Navigator.pop(context);
                                   setState(() {
                                     hasRequested = true;
                                   });
@@ -166,18 +175,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                       builder: (BuildContext context,
                                           AsyncSnapshot<List<DocumentSnapshot>>
                                               snapshots) {
-                                        int h = 0;
+                                        int h =
+                                            0; //to keep track of the number of documents
                                         DocumentSnapshot doc;
                                         Map location;
-                                        var dtoken;
+                                        var dtoken; //to store device tokens
                                         if (snapshots.connectionState ==
                                                 ConnectionState.active &&
                                             snapshots.hasData) {
-                                          print(h);
-                                          print(snapshots.data.length);
-                                          print(h == snapshots.data.length);
-
-                                          print(snapshots.data.length);
                                           return ListView.builder(
                                             scrollDirection: Axis.vertical,
                                             shrinkWrap: true,
@@ -186,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 int index) {
                                               // storeTokenList(snapshots.data.length);
                                               doc = snapshots.data[index];
-                                              print(65456);
+
                                               location = doc.data();
                                               print(doc.data());
 
@@ -199,11 +204,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                               h++;
                                               if ((h ==
                                                   snapshots.data.length)) {
+                                                //adds it to firestore when the data is fetched completly
                                                 geoFire.writeGeoPoint(
                                                     numbers: numbers,
                                                     nearbyUsersUIDs: uidsList,
                                                     tokens: tokensList);
-                                                print('sdfgsdfg');
 
                                                 hasRequested = false;
 
@@ -242,18 +247,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       fontSize: 25,
                     ),
                   ),
-                  SizedBox(height: 35),
+                  SizedBox(height: 10),
                   Expanded(
                     child: StreamBuilder<QuerySnapshot<Map>>(
-                        stream: FirebaseFirestore.instance
-                            .collection('requests')
-                            .where('userId',
-                                isEqualTo:
-                                    FirebaseAuth.instance.currentUser.uid)
-                            .snapshots(),
+                        stream: reqStream,
                         builder: (context, snapshot) {
                           if (!snapshot.hasData) {
-                            return Text("No requests");
+                            return NoRequests();
                           }
                           if (snapshot.connectionState ==
                                   ConnectionState.active &&
@@ -261,6 +261,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             return Center(
                               child: CircularProgressIndicator(),
                             );
+                          }
+                          if (snapshot.data.docs.length == 0) {
+                            return NoRequests();
                           }
                           return ListView.builder(
                               itemCount: snapshot.data.docs.length,
@@ -297,91 +300,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       )),
-    );
-  }
-}
-
-List colors = [
-  kOrangeColor,
-  kBlueColor,
-  kYellowColor,
-];
-
-class RequestCard extends StatelessWidget {
-  String title;
-  String description;
-  List phones;
-  Color bgColor;
-
-  RequestCard({this.title, this.phones, this.description, this.bgColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: bgColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(10),
-        child: ListTile(
-          title: Text(
-            title,
-            style: TextStyle(
-              color: kTitleTextColor,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          subtitle: Column(
-            children: [
-              Text(
-                description,
-                style: TextStyle(
-                  color: kTitleTextColor.withOpacity(0.7),
-                ),
-              ),
-              SizedBox(height: 20),
-              GestureDetector(
-                onTap: () async {
-                  phones.shuffle();
-
-                  String _url = 'tel:${phones[0]}';
-                  print(_url);
-                  await canLaunch(_url)
-                      ? await launch(_url)
-                      : Fluttertoast.showToast(
-                          msg: "Couldn't launch the dialer.",
-                          toastLength: Toast.LENGTH_LONG,
-                          gravity: ToastGravity.CENTER,
-                          backgroundColor: Colors.red,
-                          textColor: Colors.white,
-                          fontSize: 16.0);
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 7, horizontal: 10),
-                  decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.blue,
-                          blurRadius: 5.0,
-                        ),
-                      ],
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(15)),
-                  child: Text(
-                    "Call officer",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: "QuickSand",
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

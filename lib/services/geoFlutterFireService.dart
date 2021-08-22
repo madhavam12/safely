@@ -8,31 +8,35 @@ import 'package:safely/models/requestModel.dart';
 
 import 'firestoreDatabaseService.dart';
 import 'package:geocoder/geocoder.dart' as coder;
-import 'package:safely/services/firebaseMessagingService.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class GeoFire {
+  //create an object of geoflutterfire
   final geo = Geoflutterfire();
-  final _firestore = FirebaseFirestore.instance;
+  final _firestore = FirebaseFirestore.instance; //instance of firestore
 
-  Stream<List<DocumentSnapshot>> stream;
+  Stream<List<DocumentSnapshot>>
+      stream; //stream which yields nearby booth documents
 
   Future<Stream> triggerBoothsStream() async {
     Position pos = await _determinePosition();
     GeoFirePoint center =
         geo.point(latitude: pos.latitude, longitude: pos.longitude);
 
-    var collectionReference = _firestore.collection('pinkBooths');
-    double radius = 5;
+    var collectionReference =
+        _firestore.collection('pinkBooths'); //collection name
+    double radius = 5; //5KM radius
     String field = 'loc';
-    stream = geo
-        .collection(collectionRef: collectionReference)
-        .within(center: center, radius: radius, field: field);
+    stream = geo.collection(collectionRef: collectionReference).within(
+        center: center,
+        radius: radius,
+        field: field); //yields the list of documents within a 5KM radius
 
     return stream;
   }
 
+//below function writes geolocation data to firestore
   writeGeoPoint({
     @required List<String> tokens,
     @required List<String> numbers,
@@ -69,6 +73,7 @@ class GeoFire {
     }
   }
 
+//get addressline from lat and long
   _getLocalityName(Position pos) async {
     final coordinates = coder.Coordinates(pos.latitude, pos.longitude);
     var addresses =
@@ -77,6 +82,7 @@ class GeoFire {
     return addresses.first.addressLine;
   }
 
+//request and determine position
   Future<Position> _determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
