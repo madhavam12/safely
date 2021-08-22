@@ -31,25 +31,24 @@ dependencies:
 
   
   cloud_firestore: ^2.4.0
-  paginate_firestore: ^1.0.2
-  firebase_messaging: ^10.0.5
+ 
   
   geocoder: ^0.2.1
   firebase_auth: ^3.0.1
-  rflutter_alert: ^2.0.4
-  firebase_storage: ^10.0.1
+  
+  
   geoflutterfire: ^3.0.1
   
   url_launcher: ^6.0.9
-  flutter_riverpod: ^0.14.0+3
+  
   geocoding: ^2.0.0
-  hive_flutter: ^1.1.0
+  
   liquid_ui: ^1.0.0+9
   
   shrink_sidemenu: ^2.0.0+1-null-safety
   connection_verify: ^1.0.4
   geolocator: ^7.4.0
-  hive: ^2.0.4
+  
   line_awesome_flutter: ^2.0.0
   google_sign_in: ^5.0.7
   
