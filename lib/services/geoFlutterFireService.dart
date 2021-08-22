@@ -53,6 +53,7 @@ class GeoFire {
 
       await db.writeLoc(
         req: RequestModel(
+            photoURL: FirebaseAuth.instance.currentUser.photoURL,
             nearbyUsersNumbers: numbers,
             nearbyUsersUIDs: nearbyUsersUIDs,
             deviceTokensNearby: tokens,

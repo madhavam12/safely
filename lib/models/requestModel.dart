@@ -8,7 +8,7 @@ class RequestModel {
   final List nearbyUsersUIDs;
   final List nearbyUsersNumbers;
   final String userId;
-
+  final String photoURL;
   final String address;
   Timestamp timestamp;
   final Map loc;
@@ -16,6 +16,7 @@ class RequestModel {
   RequestModel({
     @required this.deviceTokensNearby,
     @required this.address,
+    @required this.photoURL,
     @required this.nearbyUsersNumbers,
     @required this.nearbyUsersUIDs,
     @required this.name,
@@ -28,6 +29,7 @@ class RequestModel {
         userId = json['userId'],
         nearbyUsersNumbers = json['nearbyUsersNumbers'],
         address = json['address'],
+        photoURL = json['photoURL'],
         nearbyUsersUIDs = json['nearbyUsersUID'],
         deviceTokensNearby = json["deviceTokensNearby"],
         timestamp = json['timeStamp'],
@@ -36,6 +38,7 @@ class RequestModel {
   Map<String, dynamic> toJson() => {
         'name': name,
         'loc': loc,
+        'photoURL': photoURL,
         "nearbyUsersNumbers": nearbyUsersNumbers,
         'nearbyUsersUID': nearbyUsersUIDs,
         'address': address,

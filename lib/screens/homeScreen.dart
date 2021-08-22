@@ -22,6 +22,7 @@ final GlobalKey<SideMenuState> _endSideMenuKey = GlobalKey<SideMenuState>();
 Stream reqStream = FirebaseFirestore.instance
     .collection('requests')
     .where('userId', isEqualTo: FirebaseAuth.instance.currentUser.uid)
+    .orderBy('timeStamp', descending: true)
     .snapshots();
 GeoFire geoFire = GeoFire();
 
@@ -164,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           boxShadow: [
                                             BoxShadow(
                                               color: Colors.red,
-                                              blurRadius: 5.0,
+                                              blurRadius: 15.0,
                                             ),
                                           ],
                                           color: Colors.redAccent,
@@ -175,6 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           "Help",
                                           style: TextStyle(
                                             color: Colors.white,
+                                            fontWeight: FontWeight.bold,
                                             fontFamily: "QuickSand",
                                             fontSize: 20,
                                           ),
@@ -314,6 +316,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   new DateFormat.yMMMMd('en_US');
 
                               String formatted = formatter.format(dt);
+                              String formattedTime =
+                                  DateFormat('kk:mm:a').format(dt);
 
                               colors.shuffle();
                               return Container(
@@ -321,6 +325,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   bottom: 25,
                                 ),
                                 child: RequestCard(
+                                  time: formattedTime,
                                   bgColor: colors[0],
                                   phones: snapshot.data.docs[index]
                                       .data()['nearbyUsersNumbers'],

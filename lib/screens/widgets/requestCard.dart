@@ -7,10 +7,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 class RequestCard extends StatelessWidget {
   final String title;
   final String description;
+  final String time;
+
   final List phones;
   final Color bgColor;
 
-  RequestCard({this.title, this.phones, this.description, this.bgColor});
+  RequestCard(
+      {this.title, this.time, this.phones, this.description, this.bgColor});
 
   @override
   Widget build(BuildContext context) {
@@ -22,12 +25,24 @@ class RequestCard extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.all(10),
         child: ListTile(
-          title: Text(
-            title,
-            style: TextStyle(
-              color: kTitleTextColor,
-              fontWeight: FontWeight.bold,
-            ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                time,
+                style: TextStyle(
+                  color: Colors.black.withOpacity(0.7),
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ],
           ),
           subtitle: Column(
             children: [
