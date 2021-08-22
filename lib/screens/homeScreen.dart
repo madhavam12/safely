@@ -58,196 +58,219 @@ class _HomeScreenState extends State<HomeScreen> {
                       bottomRight: Radius.circular(50))),
               leading: Container(),
               pinned: true,
-              backgroundColor: Colors.blueAccent,
+              backgroundColor: Colors.blue,
               floating: true,
               flexibleSpace: FlexibleSpaceBar(
                 background: Container(
                   decoration: BoxDecoration(
-                    color: Colors.blueAccent,
+                    color: Colors.blue.shade800,
                     borderRadius: BorderRadius.only(
                       bottomRight: Radius.circular(15),
                       bottomLeft: Radius.circular(15),
                     ),
                   ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 380,
-                          decoration: BoxDecoration(
-                            color: Colors.blueAccent,
-                            borderRadius: BorderRadius.only(
-                              bottomRight: Radius.circular(15),
-                              bottomLeft: Radius.circular(15),
+                  child: Column(
+                    children: [
+                      SingleChildScrollView(
+                        child: Stack(
+                          children: [
+                            Positioned(
+                              right: 25,
+                              bottom: 40,
+                              child: Image.asset(
+                                'assets/images/help.png',
+                                height: 220,
+                              ),
                             ),
-                          ),
-                          child: SafeArea(
-                            child: Column(
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.all(20.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            final _state =
-                                                _endSideMenuKey.currentState;
+                            Container(
+                              height: 350,
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                borderRadius: BorderRadius.only(
+                                  bottomRight: Radius.circular(15),
+                                  bottomLeft: Radius.circular(15),
+                                ),
+                              ),
+                              child: SafeArea(
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.all(20.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Container(
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                final _state = _endSideMenuKey
+                                                    .currentState;
 
-                                            if (_state.isOpened)
-                                              _state.closeSideMenu();
-                                            else
-                                              _state.openSideMenu();
-                                          },
-                                          child: Icon(LineAwesomeIcons.bars,
-                                              color: Colors.white, size: 40),
+                                                if (_state.isOpened)
+                                                  _state.closeSideMenu();
+                                                else
+                                                  _state.openSideMenu();
+                                              },
+                                              child: Icon(LineAwesomeIcons.bars,
+                                                  color: Colors.white,
+                                                  size: 40),
+                                            ),
+                                          ),
+                                          Container(
+                                            margin: EdgeInsets.only(
+                                                right: 15.0, top: 25),
+                                            child: Text(
+                                              "${DateFormat('EEEE').format(DateTime.now())}, $formatter",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontFamily: "QuickSand",
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 100,
+                                    ),
+                                    GestureDetector(
+                                      onTap: () async {
+                                        loadingBar(context);
+                                        try {
+                                          await geoFire
+                                              .triggerBoothsStream(); //starts the geoflutterfirestream
+                                          setState(() {
+                                            hasRequested = true;
+                                          });
+                                          Navigator.pop(context);
+                                        } catch (e) {
+                                          Navigator.pop(context);
+                                          Fluttertoast.showToast(
+                                              msg: e.toString(),
+                                              toastLength: Toast.LENGTH_LONG,
+                                              gravity: ToastGravity.CENTER,
+                                              backgroundColor: Colors.red,
+                                              textColor: Colors.white,
+                                              fontSize: 16.0);
+                                        }
+                                      },
+                                      child: Container(
+                                        margin: EdgeInsets.only(top: 10.0),
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 5, horizontal: 20),
+                                        decoration: BoxDecoration(
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.red,
+                                              blurRadius: 5.0,
+                                            ),
+                                          ],
+                                          color: Colors.redAccent,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Text(
+                                          "Help",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontFamily: "QuickSand",
+                                            fontSize: 20,
+                                          ),
                                         ),
                                       ),
-                                      Container(
+                                    ),
+                                    Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: Container(
                                         margin: EdgeInsets.only(
-                                            right: 15.0, top: 25),
+                                            left: 20, right: 20, top: 7),
                                         child: Text(
-                                          "${DateFormat('EEEE').format(DateTime.now())}, $formatter",
+                                          "\n\nTapping on help will send your location to every nearby police officer",
+                                          textAlign: TextAlign.center,
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontFamily: "QuickSand",
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 12,
+                                            fontSize: 15,
                                           ),
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 100,
-                                ),
-                                GestureDetector(
-                                  onTap: () async {
-                                    loadingBar(context);
-                                    try {
-                                      await geoFire
-                                          .triggerBoothsStream(); //starts the geoflutterfirestream
-                                      setState(() {
-                                        hasRequested = true;
-                                      });
-                                      Navigator.pop(context);
-                                    } catch (e) {
-                                      Navigator.pop(context);
-                                      Fluttertoast.showToast(
-                                          msg: e.toString(),
-                                          toastLength: Toast.LENGTH_LONG,
-                                          gravity: ToastGravity.CENTER,
-                                          backgroundColor: Colors.red,
-                                          textColor: Colors.white,
-                                          fontSize: 16.0);
-                                    }
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 5, horizontal: 20),
-                                    decoration: BoxDecoration(
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.red,
-                                          blurRadius: 5.0,
-                                        ),
-                                      ],
-                                      color: Colors.redAccent,
-                                      borderRadius: BorderRadius.circular(10),
                                     ),
-                                    child: Text(
-                                      "Help",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: "QuickSand",
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Center(
-                                  child: Container(
-                                    margin: EdgeInsets.all(20),
-                                    child: Text(
-                                      "Tapping on help will send your location to every nearby police officer",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Colors.white.withOpacity(0.7),
-                                        fontFamily: "QuickSand",
-                                        fontSize: 15,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                hasRequested
-                                    ? StreamBuilder(
-                                        stream: geoFire.stream,
-                                        builder: (BuildContext context,
-                                            AsyncSnapshot<
-                                                    List<DocumentSnapshot>>
-                                                snapshots) {
-                                          int h =
-                                              0; //to keep track of the number of documents
+                                    hasRequested
+                                        ? StreamBuilder(
+                                            stream: geoFire.stream,
+                                            builder: (BuildContext context,
+                                                AsyncSnapshot<
+                                                        List<DocumentSnapshot>>
+                                                    snapshots) {
+                                              int h =
+                                                  0; //to keep track of the number of documents
 
-                                          if (snapshots.connectionState ==
-                                                  ConnectionState.active &&
-                                              snapshots.hasData) {
-                                            return ListView.builder(
-                                              scrollDirection: Axis.vertical,
-                                              shrinkWrap: true,
-                                              itemCount: snapshots.data.length,
-                                              itemBuilder:
-                                                  (BuildContext context,
-                                                      int index) {
-                                                BoothModel booth =
-                                                    BoothModel.fromJson(
-                                                        snapshots.data[index]
-                                                            .data());
+                                              if (snapshots.connectionState ==
+                                                      ConnectionState.active &&
+                                                  snapshots.hasData) {
+                                                return ListView.builder(
+                                                  scrollDirection:
+                                                      Axis.vertical,
+                                                  shrinkWrap: true,
+                                                  itemCount:
+                                                      snapshots.data.length,
+                                                  itemBuilder:
+                                                      (BuildContext context,
+                                                          int index) {
+                                                    BoothModel booth =
+                                                        BoothModel.fromJson(
+                                                            snapshots
+                                                                .data[index]
+                                                                .data());
 
-                                                //tokens of nearby booths
-                                                tokensList
-                                                    .add(booth.deviceToken);
+                                                    //tokens of nearby booths
+                                                    tokensList
+                                                        .add(booth.deviceToken);
 
-                                                numbers.add(booth
-                                                    .phone); // phone numbers of booths
-                                                uidsList.add(booth.userId);
-                                                //user ids of nearby booths
+                                                    numbers.add(booth
+                                                        .phone); // phone numbers of booths
+                                                    uidsList.add(booth.userId);
+                                                    //user ids of nearby booths
 
-                                                h++;
-                                                if ((h ==
-                                                    snapshots.data.length)) {
-                                                  //adds it to firestore when the data is fetched completly
-                                                  geoFire.writeGeoPoint(
-                                                      numbers: numbers,
-                                                      nearbyUsersUIDs: uidsList,
-                                                      tokens: tokensList);
+                                                    h++;
+                                                    if ((h ==
+                                                        snapshots
+                                                            .data.length)) {
+                                                      //adds it to firestore when the data is fetched completly
+                                                      geoFire.writeGeoPoint(
+                                                          numbers: numbers,
+                                                          nearbyUsersUIDs:
+                                                              uidsList,
+                                                          tokens: tokensList);
 
-                                                  hasRequested = false;
+                                                      hasRequested = false;
 
-                                                  h = 0;
-                                                }
+                                                      h = 0;
+                                                    }
+                                                    return Container();
+                                                  },
+                                                );
+                                              } else {
                                                 return Container();
-                                              },
-                                            );
-                                          } else {
-                                            return Container();
-                                          }
-                                        },
-                                      )
-                                    : Container(),
-                              ],
+                                              }
+                                            },
+                                          )
+                                        : Container(),
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              expandedHeight: 380,
+              expandedHeight: 350,
             ),
             SliverFillRemaining(
               child: Container(
