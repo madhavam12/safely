@@ -66,7 +66,7 @@ class RequestCard extends StatelessWidget {
                       color: Colors.blue,
                       borderRadius: BorderRadius.circular(15)),
                   child: Text(
-                    "Call officer",
+                    "Call an officer",
                     style: TextStyle(
                       color: Colors.white,
                       fontFamily: "QuickSand",

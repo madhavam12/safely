@@ -62,6 +62,7 @@ class GeoFire {
             loc: loc.data),
       );
     } catch (e) {
+      print(e);
       Fluttertoast.showToast(
           msg: e.toString(),
           toastLength: Toast.LENGTH_LONG,
